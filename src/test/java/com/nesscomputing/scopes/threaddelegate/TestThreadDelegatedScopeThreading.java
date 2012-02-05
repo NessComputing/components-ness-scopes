@@ -1,0 +1,105 @@
+package com.nesscomputing.scopes.threaddelegate;
+
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
+
+
+import org.junit.After;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
+
+import com.google.inject.Key;
+import com.google.inject.Provider;
+import com.google.inject.name.Names;
+import com.nesscomputing.scopes.threaddelegate.ThreadDelegatedContext;
+import com.nesscomputing.scopes.threaddelegate.ThreadDelegatedScope;
+import com.nesscomputing.scopes.threaddelegate.ScopedObject.TestObjectProvider;
+
+public class TestThreadDelegatedScopeThreading
+{
+    private ThreadDelegatedScope scope = null;
+
+    private final Key<ScopedObject> fooTestObjectKey = Key.get(ScopedObject.class, Names.named("foo"));
+
+    @Before
+    public void setUp()
+    {
+        Assert.assertNull(scope);
+        this.scope = new ThreadDelegatedScope();
+        TestObjectProvider.reset();
+        scope.changeScope(null);
+    }
+
+    @After
+    public void tearDown()
+    {
+        Assert.assertNotNull(scope);
+        scope.changeScope(null);
+        this.scope = null;
+    }
+
+    @Test
+    public void testThreaded() throws Exception
+    {
+        final TestObjectProvider unscopedProvider = new TestObjectProvider();
+        final Provider<ScopedObject> scopedProvider = scope.scope(fooTestObjectKey, unscopedProvider);
+
+        int threadCount = 10;
+        final CountDownLatch latch = new CountDownLatch(threadCount);
+        for (int i = 0 ; i < threadCount; i++) {
+            new Thread(new Runnable() {
+
+                @Override
+                public void run()
+                {
+                    final ScopedObject testObject = scopedProvider.get();
+                    Assert.assertEquals(0, testObject.getPerformances());
+                    testObject.perform();
+                    latch.countDown();
+                }
+
+            }).start();
+
+        }
+
+        Assert.assertTrue("Some threads got stuck!", latch.await(1, TimeUnit.SECONDS));
+
+        Assert.assertEquals(threadCount, TestObjectProvider.getHandouts());
+        Assert.assertEquals(0, scopedProvider.get().getPerformances());
+    }
+
+    @Test
+    public void testThreadHandover() throws Exception
+    {
+        final TestObjectProvider unscopedProvider = new TestObjectProvider();
+        final Provider<ScopedObject> scopedProvider = scope.scope(fooTestObjectKey, unscopedProvider);
+
+        int threadCount = 10;
+
+        final ThreadDelegatedContext parentPlate = scope.getContext();
+
+        final CountDownLatch latch = new CountDownLatch(threadCount);
+        for (int i = 0 ; i < threadCount; i++) {
+            new Thread(new Runnable() {
+
+                @Override
+                public void run()
+                {
+                    scope.changeScope(parentPlate);
+                    final ScopedObject testObject = scopedProvider.get();
+                    testObject.perform();
+                    scope.changeScope(null);
+                    latch.countDown();
+                }
+
+            }).start();
+
+        }
+
+        Assert.assertTrue("Some threads got stuck!", latch.await(1, TimeUnit.SECONDS));
+
+        Assert.assertEquals(1, TestObjectProvider.getHandouts());
+        Assert.assertEquals(threadCount, scopedProvider.get().getPerformances());
+    }
+}

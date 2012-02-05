@@ -1,0 +1,108 @@
+package com.nesscomputing.scopes.threaddelegate;
+
+
+import org.junit.After;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
+
+import com.google.inject.Key;
+import com.google.inject.Provider;
+import com.google.inject.name.Names;
+import com.nesscomputing.scopes.threaddelegate.ThreadDelegatedContext;
+import com.nesscomputing.scopes.threaddelegate.ThreadDelegatedScope;
+import com.nesscomputing.scopes.threaddelegate.ScopedObject.TestObjectProvider;
+
+public class TestThreadDelegatedProvider
+{
+    private ThreadDelegatedScope scope = null;
+
+    private final Key<ScopedObject> fooTestObjectKey = Key.get(ScopedObject.class, Names.named("foo"));
+
+    @Before
+    public void setUp()
+    {
+        Assert.assertNull(scope);
+        this.scope = new ThreadDelegatedScope();
+    }
+
+    @After
+    public void tearDown()
+    {
+        Assert.assertNotNull(scope);
+        this.scope = null;
+    }
+
+    @Test
+    public void testUnscopedProvider()
+    {
+        final Provider<ScopedObject> unscopedProvider = new TestObjectProvider();
+
+        final ScopedObject t1 = unscopedProvider.get();
+        Assert.assertNotNull(t1);
+
+        final ScopedObject t2 = unscopedProvider.get();
+        Assert.assertNotNull(t2);
+
+        Assert.assertNotSame(t1, t2);
+    }
+
+    @Test
+    public void testSimpleProvider()
+    {
+        final Provider<ScopedObject> scopedProvider = scope.scope(fooTestObjectKey, new TestObjectProvider());
+        Assert.assertNotNull(scopedProvider);
+
+        final ScopedObject t1 = scopedProvider.get();
+        Assert.assertNotNull(t1);
+
+        final ScopedObject t2 = scopedProvider.get();
+        Assert.assertNotNull(t2);
+
+        Assert.assertSame(t1, t2);
+    }
+
+    @Test
+    public void testScopeChange()
+    {
+        final Provider<ScopedObject> scopedProvider = scope.scope(fooTestObjectKey, new TestObjectProvider());
+        Assert.assertNotNull(scopedProvider);
+
+        final ScopedObject t1 = scopedProvider.get();
+        Assert.assertNotNull(t1);
+
+        scope.changeScope(null);
+
+        final ScopedObject t2 = scopedProvider.get();
+        Assert.assertNotNull(t2);
+
+        Assert.assertNotSame(t1, t2);
+    }
+
+    @Test
+    public void testScopeHandoff()
+    {
+        final Provider<ScopedObject> scopedProvider = scope.scope(fooTestObjectKey, new TestObjectProvider());
+        Assert.assertNotNull(scopedProvider);
+
+        final ScopedObject t1 = scopedProvider.get();
+        Assert.assertNotNull(t1);
+
+        final ThreadDelegatedContext plate = scope.getContext();
+
+        scope.changeScope(null);
+
+        final ScopedObject t2 = scopedProvider.get();
+        Assert.assertNotNull(t2);
+
+        Assert.assertNotSame(t1, t2);
+
+        scope.changeScope(plate);
+
+        final ScopedObject t3 = scopedProvider.get();
+        Assert.assertNotNull(t3);
+
+        Assert.assertSame(t1, t3);
+        Assert.assertNotSame(t2, t3);
+    }
+}
