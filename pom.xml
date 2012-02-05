@@ -9,9 +9,9 @@
   </parent>
 
   <scm>
-    <connection>scm:git:git://github.com/NessComputing/components-ness-config.git</connection>
-    <developerConnection>scm:git:git@github.com:NessComputing/components-ness-config.git</developerConnection>
-    <url>http://github.com/NessComputing/components-ness-config</url>
+    <connection>scm:git:git://github.com/NessComputing/components-ness-scopes.git</connection>
+    <developerConnection>scm:git:git@github.com:NessComputing/components-ness-scopes.git</developerConnection>
+    <url>http://github.com/NessComputing/components-ness-scopes</url>
   </scm>
 
   <groupId>com.nesscomputing.components</groupId>
