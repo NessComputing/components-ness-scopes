@@ -22,6 +22,8 @@ import org.junit.Test;
 
 import com.google.inject.Key;
 import com.google.inject.name.Names;
+import com.google.inject.util.Providers;
+
 import com.nesscomputing.scopes.threaddelegate.ThreadDelegatedContext;
 
 public class TestThreadDelegatedContext
@@ -32,112 +34,97 @@ public class TestThreadDelegatedContext
     private final Key<String> barStringKey = Key.get(String.class, Names.named("bar"));
 
     @Before
-    public void setUp()
+    public void setUp() throws Exception
     {
         Assert.assertNull(plate);
         this.plate = new ThreadDelegatedContext();
     }
 
     @After
-    public void tearDown()
+    public void tearDown() throws Exception
     {
         Assert.assertNotNull(plate);
         this.plate = null;
     }
 
     @Test
-    public void testEmptyPlate()
+    public void testEmptyPlate() throws Exception
     {
         Assert.assertEquals(0, plate.size());
         Assert.assertFalse(plate.containsKey(Key.get(String.class)));
     }
 
     @Test
-    public void testSimplePut()
+    public void testSimplePut() throws Exception
     {
         Assert.assertFalse(plate.containsKey(fooStringKey));
 
-        plate.put(fooStringKey, "hallo");
+        plate.putIfAbsent(fooStringKey, Providers.of("hallo"));
         Assert.assertEquals(1, plate.size());
         Assert.assertTrue(plate.containsKey(fooStringKey));
         Assert.assertEquals("hallo", plate.get(fooStringKey));
     }
 
     @Test
-    public void testDoubleSamePut()
+    public void testDoubleSamePut() throws Exception
     {
         Assert.assertFalse(plate.containsKey(fooStringKey));
 
-        plate.put(fooStringKey, "hallo");
+        plate.putIfAbsent(fooStringKey, Providers.of("hallo"));
         Assert.assertEquals(1, plate.size());
         Assert.assertTrue(plate.containsKey(fooStringKey));
         Assert.assertEquals("hallo", plate.get(fooStringKey));
 
-        plate.put(fooStringKey, "hallo");
+        plate.putIfAbsent(fooStringKey, Providers.of("hallo"));
         Assert.assertEquals(1, plate.size());
         Assert.assertTrue(plate.containsKey(fooStringKey));
         Assert.assertEquals("hallo", plate.get(fooStringKey));
     }
 
     @Test
-    public void testOverridePut()
-    {
-        plate.put(fooStringKey, "hallo");
-        Assert.assertEquals(1, plate.size());
-        Assert.assertTrue(plate.containsKey(fooStringKey));
-        Assert.assertEquals("hallo", plate.get(fooStringKey));
-
-        // Override put
-        plate.put(fooStringKey, "world");
-        Assert.assertEquals(1, plate.size());
-        Assert.assertTrue(plate.containsKey(fooStringKey));
-        Assert.assertEquals("world", plate.get(fooStringKey));
-    }
-
-    @Test
-    public void testDoublePut()
+    public void testDoublePut() throws Exception
     {
         Assert.assertFalse(plate.containsKey(fooStringKey));
         Assert.assertFalse(plate.containsKey(barStringKey));
 
-        plate.put(fooStringKey, "hallo");
+        plate.putIfAbsent(fooStringKey, Providers.of("hallo"));
         Assert.assertEquals(1, plate.size());
         Assert.assertTrue(plate.containsKey(fooStringKey));
         Assert.assertEquals("hallo", plate.get(fooStringKey));
 
-        plate.put(barStringKey, "world");
+        plate.putIfAbsent(barStringKey, Providers.of("world"));
         Assert.assertEquals(2, plate.size());
         Assert.assertTrue(plate.containsKey(barStringKey));
         Assert.assertEquals("world", plate.get(barStringKey));
     }
 
     @Test
-    public void testNullValue()
+    public void testNullValueOverwrite() throws Exception
     {
-        plate.put(fooStringKey, null);
+        plate.putIfAbsent(fooStringKey, Providers.<String>of(null));
         Assert.assertEquals(1, plate.size());
         Assert.assertTrue(plate.containsKey(fooStringKey));
         Assert.assertNull(plate.get(fooStringKey));
 
-        // Override put
-        plate.put(fooStringKey, "world");
+        // Should still return null, not overwriting it.
+        plate.putIfAbsent(fooStringKey, Providers.of("world"));
         Assert.assertEquals(1, plate.size());
         Assert.assertTrue(plate.containsKey(fooStringKey));
-        Assert.assertEquals("world", plate.get(fooStringKey));
+        Assert.assertEquals(null, plate.get(fooStringKey));
     }
 
     @Test
-    public void testClear()
+    public void testClear() throws Exception
     {
         Assert.assertFalse(plate.containsKey(fooStringKey));
         Assert.assertFalse(plate.containsKey(barStringKey));
 
-        plate.put(fooStringKey, "hallo");
+        plate.putIfAbsent(fooStringKey, Providers.of("hallo"));
         Assert.assertEquals(1, plate.size());
         Assert.assertTrue(plate.containsKey(fooStringKey));
         Assert.assertEquals("hallo", plate.get(fooStringKey));
 
-        plate.put(barStringKey, "world");
+        plate.putIfAbsent(barStringKey, Providers.of("world"));
         Assert.assertEquals(2, plate.size());
         Assert.assertTrue(plate.containsKey(barStringKey));
         Assert.assertEquals("world", plate.get(barStringKey));
@@ -149,19 +136,19 @@ public class TestThreadDelegatedContext
     }
 
     @Test(expected=IllegalArgumentException.class)
-    public void testNullKeyGet()
+    public void testNullKeyGet() throws Exception
     {
         plate.get(null);
     }
 
     @Test(expected=IllegalArgumentException.class)
-    public void testNullKeyPut()
+    public void testNullKeyPut() throws Exception
     {
-        plate.put(null, "Hello");
+        plate.putIfAbsent(null, Providers.of("Hello"));
     }
 
     @Test(expected=IllegalArgumentException.class)
-    public void testNullKeyContains()
+    public void testNullKeyContains() throws Exception
     {
         plate.containsKey(null);
     }
