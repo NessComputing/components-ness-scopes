@@ -18,6 +18,11 @@ package com.nesscomputing.scopes.threaddelegate.concurrent;
 import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
 
+/**
+ * @deprecated This class has moved to components-ness-executors, so use that version
+ * instead.
+ */
+@Deprecated
 public final class ThreadDelegatingDecorator
 {
     private ThreadDelegatingDecorator()
