@@ -12,11 +12,12 @@
     <connection>scm:git:git://github.com/NessComputing/components-ness-scopes.git</connection>
     <developerConnection>scm:git:git@github.com:NessComputing/components-ness-scopes.git</developerConnection>
     <url>http://github.com/NessComputing/components-ness-scopes</url>
+    <tag>ness-scopes-1.0.1</tag>
   </scm>
 
   <groupId>com.nesscomputing.components</groupId>
   <artifactId>ness-scopes</artifactId>
-  <version>1.0.1-SNAPSHOT</version>
+  <version>1.0.1</version>
   <packaging>jar</packaging>
 
   <dependencies>
