@@ -16,12 +16,15 @@
 package com.nesscomputing.scopes.threaddelegate;
 
 
+import java.util.concurrent.ExecutionException;
+
 import javax.annotation.Nullable;
 
 
 import com.google.common.base.Preconditions;
 import com.google.inject.Key;
 import com.google.inject.Provider;
+import com.google.inject.ProvisionException;
 import com.google.inject.Scope;
 import com.google.inject.Singleton;
 import com.nesscomputing.scopes.threaddelegate.ThreadDelegatedContext.ScopeEvent;
@@ -107,18 +110,20 @@ public class ThreadDelegatedScope implements Scope
         @Override
         public T get()
         {
-            final ThreadDelegatedContext context = getContext();
-            // This must be synchronized around the context, because otherwise
-            // multiple threads will try to set the same value at the same time.
-            synchronized(context) {
-                if (context.containsKey(key)) {
-                    return context.get(key);
-                }
-                else {
-                    final T value = unscoped.get();
-                    context.put(key, value);
+            try {
+                final ThreadDelegatedContext context = getContext();
+                T value = context.get(key);
+                if (value != null || context.containsKey(key)) {
                     return value;
                 }
+                else {
+                    return context.putIfAbsent(key, unscoped);
+                }
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                throw new ProvisionException("Interrupted while waiting for computed ThreadDelegated value for key " + key, e);
+            } catch (ExecutionException e) {
+                throw new ProvisionException("Exception while computing value for key " + key, e.getCause());
             }
         }
 

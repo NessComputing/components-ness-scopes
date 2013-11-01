@@ -23,6 +23,8 @@ import org.junit.Test;
 
 import com.google.inject.Key;
 import com.google.inject.name.Names;
+import com.google.inject.util.Providers;
+
 import com.nesscomputing.scopes.threaddelegate.ThreadDelegatedContext;
 import com.nesscomputing.scopes.threaddelegate.ThreadDelegatedScope;
 import com.nesscomputing.scopes.threaddelegate.ThreadDelegatedContext.ScopeEvent;
@@ -31,24 +33,24 @@ public class TestThreadDelegatedScope
 {
     private ThreadDelegatedScope scope = null;
 
-    private final Key<String> fooStringKey = Key.get(String.class, Names.named("foo"));
+    private final Key<EventRecordingObject> fooStringKey = Key.get(EventRecordingObject.class, Names.named("foo"));
 
     @Before
-    public void setUp()
+    public void setUp() throws Exception
     {
         Assert.assertNull(scope);
         this.scope = new ThreadDelegatedScope();
     }
 
     @After
-    public void tearDown()
+    public void tearDown() throws Exception
     {
         Assert.assertNotNull(scope);
         this.scope = null;
     }
 
     @Test
-    public void testNewPlate()
+    public void testNewPlate() throws Exception
     {
         final ThreadDelegatedContext plate = scope.getContext();
         Assert.assertNotNull(plate);
@@ -62,7 +64,7 @@ public class TestThreadDelegatedScope
     }
 
     @Test
-    public void testScopeLeave()
+    public void testScopeLeave() throws Exception
     {
         final ThreadDelegatedContext plate = scope.getContext();
         Assert.assertNotNull(plate);
@@ -78,7 +80,7 @@ public class TestThreadDelegatedScope
     }
 
     @Test
-    public void testScopePromote()
+    public void testScopePromote() throws Exception
     {
         final ThreadDelegatedContext newPlate = new ThreadDelegatedContext();
 
@@ -100,7 +102,7 @@ public class TestThreadDelegatedScope
     }
 
     @Test
-    public void testChangeScopeEvents()
+    public void testChangeScopeEvents() throws Exception
     {
         final ThreadDelegatedContext plate = scope.getContext();
         Assert.assertNotNull(plate);
@@ -108,7 +110,7 @@ public class TestThreadDelegatedScope
 
         final EventRecordingObject fooEventTest = new EventRecordingObject();
 
-        plate.put(fooStringKey, fooEventTest);
+        plate.putIfAbsent(fooStringKey, Providers.of(fooEventTest));
         Assert.assertEquals(1, fooEventTest.getEventCount());
         Assert.assertEquals(ScopeEvent.ENTER, fooEventTest.getLastEvent());
 
@@ -119,12 +121,12 @@ public class TestThreadDelegatedScope
     }
 
     @Test
-    public void testScopeEnterLeaveEvents()
+    public void testScopeEnterLeaveEvents() throws Exception
     {
         final ThreadDelegatedContext plate = new ThreadDelegatedContext();
         final EventRecordingObject fooEventTest = new EventRecordingObject();
 
-        plate.put(fooStringKey, fooEventTest);
+        plate.putIfAbsent(fooStringKey, Providers.of(fooEventTest));
         Assert.assertEquals(1, fooEventTest.getEventCount());
         Assert.assertEquals(ScopeEvent.ENTER, fooEventTest.getLastEvent());
 
