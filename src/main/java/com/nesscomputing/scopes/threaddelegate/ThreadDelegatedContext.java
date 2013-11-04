@@ -71,6 +71,7 @@ public class ThreadDelegatedContext
      * @param valueComputer the Provider that will compute the value if necessary
      * @return the old value, if it already existed, or the freshly computed value
      */
+    @SuppressWarnings("PMD.UnnecessaryLocalBeforeReturn")
     <T> T putIfAbsent(@Nonnull final Key<T> key, @Nonnull final Provider<T> valueComputer) throws InterruptedException, ExecutionException
     {
         Preconditions.checkArgument(key != null, "Key must not be null!");
