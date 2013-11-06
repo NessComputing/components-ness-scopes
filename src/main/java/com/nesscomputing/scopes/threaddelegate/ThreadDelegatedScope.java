@@ -20,7 +20,6 @@ import java.util.concurrent.ExecutionException;
 
 import javax.annotation.Nullable;
 
-
 import com.google.common.base.Preconditions;
 import com.google.inject.Key;
 import com.google.inject.Provider;
@@ -108,6 +107,7 @@ public class ThreadDelegatedScope implements Scope
         }
 
         @Override
+        @SuppressWarnings("PMD.PreserveStackTrace")
         public T get()
         {
             try {
