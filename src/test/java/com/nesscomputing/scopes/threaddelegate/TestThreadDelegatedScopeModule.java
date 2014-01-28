@@ -18,21 +18,18 @@ package com.nesscomputing.scopes.threaddelegate;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
-
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Stage;
 import com.google.inject.servlet.GuiceFilter;
-import com.nesscomputing.scopes.threaddelegate.ThreadDelegatedContext;
-import com.nesscomputing.scopes.threaddelegate.ThreadDelegatedScope;
-import com.nesscomputing.scopes.threaddelegate.ThreadDelegatedScopeModule;
+
 import com.nesscomputing.scopes.threaddelegate.ScopedObject.TestObjectProvider;
+
+import org.junit.After;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
 
 public class TestThreadDelegatedScopeModule
 {

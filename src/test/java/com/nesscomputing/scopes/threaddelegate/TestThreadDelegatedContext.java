@@ -15,16 +15,14 @@
  */
 package com.nesscomputing.scopes.threaddelegate;
 
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-
 import com.google.inject.Key;
 import com.google.inject.name.Names;
 import com.google.inject.util.Providers;
 
-import com.nesscomputing.scopes.threaddelegate.ThreadDelegatedContext;
+import org.junit.After;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
 
 public class TestThreadDelegatedContext
 {

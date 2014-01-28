@@ -24,9 +24,9 @@ import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 
-
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
+
 import com.nesscomputing.logging.Log;
 import com.nesscomputing.scopes.threaddelegate.ThreadDelegatedScope;
 

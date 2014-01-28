@@ -18,6 +18,7 @@ package com.nesscomputing.scopes.threaddelegate;
 
 import com.google.inject.Scopes;
 import com.google.inject.servlet.ServletModule;
+
 import com.nesscomputing.scopes.threaddelegate.servlet.ThreadDelegatingScopeFilter;
 
 /**

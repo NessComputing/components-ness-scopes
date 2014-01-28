@@ -26,6 +26,7 @@ import com.google.inject.Provider;
 import com.google.inject.ProvisionException;
 import com.google.inject.Scope;
 import com.google.inject.Singleton;
+
 import com.nesscomputing.scopes.threaddelegate.ThreadDelegatedContext.ScopeEvent;
 
 /**
