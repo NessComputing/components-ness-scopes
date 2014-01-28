@@ -22,24 +22,23 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 
-
-import org.easymock.EasyMock;
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.google.inject.Stage;
 import com.google.inject.servlet.GuiceFilter;
+
 import com.nesscomputing.scopes.threaddelegate.ScopedObject;
+import com.nesscomputing.scopes.threaddelegate.ScopedObject.TestObjectProvider;
 import com.nesscomputing.scopes.threaddelegate.ThreadDelegatedScope;
 import com.nesscomputing.scopes.threaddelegate.ThreadDelegatedScopeModule;
-import com.nesscomputing.scopes.threaddelegate.ScopedObject.TestObjectProvider;
-import com.nesscomputing.scopes.threaddelegate.servlet.ThreadDelegatingScopeFilter;
+
+import org.easymock.EasyMock;
+import org.junit.After;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
 
 public class TestThreadDelegatingScopeFilter
 {

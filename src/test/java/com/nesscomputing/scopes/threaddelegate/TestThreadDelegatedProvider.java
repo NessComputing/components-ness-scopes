@@ -16,17 +16,16 @@
 package com.nesscomputing.scopes.threaddelegate;
 
 
+import com.google.inject.Key;
+import com.google.inject.Provider;
+import com.google.inject.name.Names;
+
+import com.nesscomputing.scopes.threaddelegate.ScopedObject.TestObjectProvider;
+
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-
-import com.google.inject.Key;
-import com.google.inject.Provider;
-import com.google.inject.name.Names;
-import com.nesscomputing.scopes.threaddelegate.ThreadDelegatedContext;
-import com.nesscomputing.scopes.threaddelegate.ThreadDelegatedScope;
-import com.nesscomputing.scopes.threaddelegate.ScopedObject.TestObjectProvider;
 
 public class TestThreadDelegatedProvider
 {
